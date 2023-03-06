@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.domain.Case;
 import com.example.demo.domain.Purchase;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +9,8 @@ import java.time.Month;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -22,6 +25,15 @@ public class ToPlayWithStreamsService {
         return amountBoolean && timeBoolean;
     };
 
+    private static final Function<Purchase, Case> CONVERTER = ToPlayWithStreamsService::mapToCase;
+
+    private static Case mapToCase(Purchase purchase) {
+        Case result = new Case();
+        result.setId(UUID.randomUUID());
+        result.setPurchaseId(purchase.getId());
+        return result;
+    }
+
     public Set<Integer> getEvenNumbers(List<Integer> input) {
         return input.stream().filter(Objects::nonNull).filter(i -> i % 2 == 0).collect(Collectors.toSet());
     }
@@ -30,5 +42,7 @@ public class ToPlayWithStreamsService {
         return input.stream().filter(Objects::nonNull).filter(SAMPLE_PREDICATE).collect(Collectors.toSet());
     }
 
-    // TODO 1 with a Mapper
+    public Set<Case> getCases(List<Purchase> input) {
+        return input.stream().filter(Objects::nonNull).map(CONVERTER).collect(Collectors.toSet());
+    }
 }
